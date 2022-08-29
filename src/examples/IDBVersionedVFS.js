@@ -4,7 +4,7 @@ import { WebLocksExclusive as WebLocks } from './WebLocks.js';
 import { IDBContext } from './IDBContext.js';
 
 const SECTOR_SIZE = 512;
-const GENERIC_FILE_BLOCK_SIZE = 4096;
+const GENERIC_FILE_BLOCK_SIZE = 8192;
 
 /**
  * @typedef VFSOptions
@@ -198,8 +198,14 @@ export class IDBVersionedVFS extends VFS.Base {
           }
         }
 
-        pData.value.subarray(bufferOffset)
-          .set(block.data.subarray(blockOffset, blockOffset + blockBytes));
+        if (block === undefined) {
+          log(`skipping undefined block: ${blockIndex}`);
+          pData.value.subarray(bufferOffset)
+            .fill(0, blockBytes);
+        } else {
+          pData.value.subarray(bufferOffset)
+            .set(block.data.subarray(blockOffset, blockOffset + blockBytes));
+        }
 
         bufferOffset += blockBytes;
         fileOffset += blockBytes;

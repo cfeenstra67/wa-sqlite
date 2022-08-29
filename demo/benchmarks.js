@@ -10,6 +10,7 @@ import { MemoryVFS } from '../src/examples/MemoryVFS.js';
 import { MemoryAsyncVFS } from '../src/examples/MemoryAsyncVFS.js';
 import { IDBBatchAtomicVFS } from '../src/examples/IDBBatchAtomicVFS.js';
 import { IDBMinimalVFS } from '../src/examples/IDBMinimalVFS.js';
+import { IDBVersionedVFS } from '../src/examples/IDBVersionedVFS.js';
 
 const TESTS = [
   test1,
@@ -37,7 +38,8 @@ const TESTS = [
     : [
         'benchmark', 'idb-benchmark', 'idb-benchmark-relaxed',
         'idb-minimal-benchmark', 'idb-minimal-benchmark-relaxed',
-        'idb-batch-atomic-benchmark', 'idb-batch-atomic-benchmark-relaxed'
+        'idb-batch-atomic-benchmark', 'idb-batch-atomic-benchmark-relaxed',
+        'idb-versioned', 'idb-versioned-relaxed',
       ];
   await Promise.all(dbNames.map(dbName => indexedDB.deleteDatabase(dbName)));
 
@@ -61,6 +63,8 @@ const TESTS = [
   sqlite3a.vfs_register(new IDBMinimalVFS('idb-minimal-benchmark-relaxed', { durability: 'relaxed' }));
   sqlite3a.vfs_register(new IDBBatchAtomicVFS('idb-batch-atomic-benchmark'));
   sqlite3a.vfs_register(new IDBBatchAtomicVFS('idb-batch-atomic-benchmark-relaxed', { durability: 'relaxed' }));
+  sqlite3a.vfs_register(new IDBVersionedVFS('idb-versioned'));
+  sqlite3a.vfs_register(new IDBVersionedVFS('idb-versioned-relaxed', { durability: 'relaxed' }));
 
   /** @type {Array<[SQLiteAPI, string]>} */
   const configs = [
@@ -72,6 +76,8 @@ const TESTS = [
     [sqlite3a, 'idb-minimal-benchmark-relaxed'],
     [sqlite3a, 'idb-batch-atomic-benchmark'],
     [sqlite3a, 'idb-batch-atomic-benchmark-relaxed'],
+    [sqlite3a, 'idb-versioned'],
+    [sqlite3a, 'idb-versioned-relaxed']
   ];
 
   const button = document.getElementById('start');
